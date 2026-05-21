@@ -9,7 +9,7 @@ board.addEventListener("mousemove", draw);
 function draw(e) {
   context.lineWidth = 10px;
   context.lineCap = "round";
-  context.strokeStyle = colorPicker.value;
+  context.strokeStyle = #000000;
 
   context.lineTo(e.offsetX, e.offsetY);
   context.stroke();
