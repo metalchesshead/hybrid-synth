@@ -7,7 +7,7 @@ const colorPicker = document.getElementById("color-picker");
 
 board.addEventListener("mousemove", draw);
 
-function draw(e) {
+function draw() {
   context.lineWidth = brushSize.vlaue;
   context.lineCap = "round";
   context.strokeStyle = colorPicker.value;
