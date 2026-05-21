@@ -7,6 +7,7 @@ const clearButton = document.getElementById("clear-button");
 board.addEventListener("mousemove", draw);
 
 function draw() {
+  context.lineWidth = 10px;
   context.lineCap = "round";
   context.strokeStyle = colorPicker.value;
 
