@@ -1,0 +1,5 @@
+#board {
+  boarder: 1px solid black;
+  background: white;
+  cursor: crosshair;
+}
