@@ -6,6 +6,8 @@ var coords = [];
 let isDrawing = false;
 const clearButton = document.getElementById("clear-button");
 const downloadButton = document.getElementById("download-button");
+var sampleSize = document.getElementById("samples");
+const enterButton = document.getElementById("enter-button");
 
 board.addEventListener("pointerdown", () => {isDrawing = true}); //start drawing
 board.addEventListener("pointerup", () => { //stop drawing
@@ -18,6 +20,7 @@ board.style.touchAction = "none";
 
 clearButton.addEventListener("click", clearCanvas);
 downloadButton.addEventListener("click", exportAdjacency);
+enterButton.addEventListener("click", canvasWidth); 
 
 function draw(e) { //e = event, contains mouse click, position, etc information
     if (!isDrawing) return;
@@ -36,6 +39,12 @@ coords.push([5000 - 10*e.offsetY, ])
 function clearCanvas() {
     context.clearRect(0, 0, board.width, board.height);
 }
+
+function canvasWidth() {
+var board = document.getElementById('board');  
+board.width = sampleSize.value;
+}
+
 function exportAdjacency() {
 
             
