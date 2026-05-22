@@ -30,7 +30,7 @@ function draw(e) { //e = event, contains mouse click, position, etc information
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
-coords.push([e.offsetX, e.offsetY])
+coords.push([5000 - 10*e.offsetY, ])
 }
 
 function clearCanvas() {
