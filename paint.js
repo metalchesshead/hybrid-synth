@@ -33,7 +33,7 @@ function draw(e) { //e = event, contains mouse click, position, etc information
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
-coords.push([5000 - 10*e.offsetY, ])
+coords.push([Math.round(5000 - 10*(e.offsetY+20))])
 }
 
 function clearCanvas() {
@@ -52,7 +52,7 @@ function exportAdjacency() {
 
             const csvContent = `data:text/csv;charset=utf-8,${coords
                 .map((e) => e.join(","))
-                .join("\n")}`;
+                .join(", ")}`;
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
