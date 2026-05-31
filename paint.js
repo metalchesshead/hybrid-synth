@@ -22,6 +22,8 @@ clearButton.addEventListener("click", clearCanvas);
 downloadButton.addEventListener("click", exportAdjacency);
 enterButton.addEventListener("click", canvasWidth); 
 
+
+
 function draw(e) { //e = event, contains mouse click, position, etc information
     if (!isDrawing) return;
 
@@ -34,6 +36,8 @@ function draw(e) { //e = event, contains mouse click, position, etc information
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
 coords.push([Math.round(5000 - 10*(e.offsetY+20))])
+
+document.getElementById("num").innerText = coords.length;
 }
 
 function clearCanvas() {
@@ -59,6 +63,8 @@ function exportAdjacency() {
             link.setAttribute("download", "data.txt");
             document.body.appendChild(link);
             link.click()
+
+
         }
 /*
 function downloadImage() {
