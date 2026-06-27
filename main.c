@@ -84,6 +84,7 @@ void dacWrite4(int value) {
 }
 int note1, note2;
 int mux0, mux1, mux2, mux3, mux4, mux5, mux6, mux7;
+int mux0A, mux1A, mux2A, mux3A, mux4A, mux5A, mux6A, mux7A;
 int cvmux0, cvmux1, cvmux2, cvmux3, cvmux4, cvmux5, cvmux6, cvmux7;
 float freq1, freq2;
 byte v = 1, w = 1;
@@ -285,6 +286,8 @@ void mux() {
    dacWrite1(dacthing, 0);
  dacWrite1(2875, 1);
  mux0 = analogRead(22);
+ mux0A = analogRead(23);
+
 
    digitalWrite(14, LOW);
   digitalWrite(15, LOW);
@@ -293,7 +296,7 @@ void mux() {
    dacWrite1(dacthing, 0);
  dacWrite1(2875, 1);
  mux0 = analogRead(22);
-
+ mux0A = analogRead(23);
 
   //vco1
  //dacWrite1((round(lfoamp/1000)*dacthing), 0);
@@ -305,6 +308,7 @@ void mux() {
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
  mux1 = analogRead(22);
+
  //dacWrite1(4000, 0);
  //dacthing = 2600;
  //dacWrite1(dacthing, 0);
@@ -316,6 +320,7 @@ void mux() {
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
  mux2 = analogRead(22);
+ mux2A = analogRead(23);
  //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
  dacWrite1(0, 0);
 
@@ -329,14 +334,16 @@ void mux() {
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
  mux4 = analogRead(22);
+ mux1A = analogRead(23);
   dacWrite1(0, 0);
+   
   //dacWrite1(4000, 1);
   //dacWrite1(2225, 0); //offset
   digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
    dacWrite1(1000+1.5*mux1, 0); //vcf2 cv
-  //  dacWrite1(dacData, 1);
+    //dacWrite1(dacData, 1);
 
  mux5 = analogRead(22);
  //dacWrite1(dacthing2, 1); //voice 2 vco
@@ -349,7 +356,8 @@ dacWrite1(0, 0);
  digitalWrite(14, HIGH);
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);  
- dacWrite1(0, 0); //vca2 cv 
+ dacWrite1(2700 - envelope, 0); //vca2 cv 
+  mux3A = analogRead(23);
  mux6 = analogRead(22);
  
  digitalWrite(14, LOW);
@@ -403,7 +411,7 @@ Serial.println(mux7);
 */
 //Serial.println(sustain);
      //CV0=analogRead(0);                     // get the attack pole location
-     CV0=mux0;
+     CV0=mux0A;
   alpha1=0.999*cos((1023-CV0)/795);
   alpha1=sqrt(alpha1);  
 
@@ -411,22 +419,22 @@ Serial.println(mux7);
   alphaA1=sqrt(alphaA1);  
  
  // CV1=analogRead(1);      
- CV1 = mux1;                // get the release pole location
+ CV1 = mux1A;                // get the release pole location
   alpha2=0.999*cos((1023-CV1)/795);
   alpha2=sqrt(alpha2);  
   
   alphaA2=0.999*cos((1023-CV1)/795);
   alphaA2=sqrt(alphaA2); 
   
- // CV2=analogRead(2);                     // get the (integer) sustain level
- CV2 = round((drive/1023))*mux6 + 610;
+ //CV2=mux2A;                     // get the (integer) sustain level
+ CV2 = round((drive/1023))*mux2A + 610;
   sustain=CV2;
   sustainA=CV2<<2;
 
 
 
   //CV3=analogRead(3);                     // get the release pole location (potentially closer to 1.0)
-  CV3 = mux7;
+  CV3 = mux3A;
   alpha3=0.99999*cos((1023-CV3)/795);
   alpha3=sqrt(alpha3);
 
@@ -466,7 +474,7 @@ if (envelope<4.0) {
 dacWrite3(round(freq2*0.97783686));
 envelopeA=((1.0-alphaA)*driveA+alphaA*envelopeA);
 //dacWrite4(round(envelopeA));
-//Serial.println(envelope);
+Serial.println(envelope);
 
 
 
