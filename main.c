@@ -34,7 +34,7 @@ void dacWrite1(int value, byte dac) {
   // take the SS pin low to select the chip:
   //PORTB &= ~4; //faster than digitalWrite
   SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
-  digitalWriteFast(7, LOW);
+  digitalWriteFast(6, LOW);
   //send a value to the DAC
   SPI.transfer((dac & 1) <<7 | 0x30 | ((value >> 8) & 0x0F)); //bits 0..3 are bits 8..11 of 12 bit value, bits 4..7 are control data 
   SPI.transfer(value & 0xFF); //bits 0..7 of 12 bit value
@@ -43,7 +43,7 @@ void dacWrite1(int value, byte dac) {
   
   // take the SS pin high to de-select the chip:
   //PORTB |= 4; //faster than digitalWrite 
-  digitalWriteFast(7, HIGH);
+  digitalWriteFast(6, HIGH);
   SPI.endTransaction();
 }
 void dacWrite2(int value) {
@@ -123,9 +123,12 @@ float totaltemp = 0.0;
 float avgtemp = 0.0;
 int starttime = 0;
 
+float lfoamp = 1.0;
+
 void myNoteOn(byte channel, byte note, byte velocity) {
   
   Serial.println(note);
+  Serial.println("hi");
   //freq = 440.00*(pow(2,((note-69.00)/12.00)));
   
 
@@ -237,7 +240,9 @@ uint8_t numBits(uint32_t num) {
 void setup()
 {
      analogReadResolution(10);
-
+pinMode(2, OUTPUT);
+pinMode(3, OUTPUT);
+pinMode(6, OUTPUT);
     pinMode(7, OUTPUT);
     pinMode(8, OUTPUT);
     pinMode(9, OUTPUT);
@@ -247,8 +252,9 @@ void setup()
     pinMode(14, OUTPUT);
     pinMode(15, OUTPUT);
     pinMode(16, OUTPUT);
+    pinMode(22, INPUT);
     //pinMode(0, INPUT);
-  
+  digitalWrite(6, HIGH);
     //pinMode(7, OUTPUT);
      MIDI.setHandleNoteOn(myNoteOn);
   MIDI.setHandleNoteOff(myNoteOff);
@@ -257,7 +263,8 @@ void setup()
   //Serial2.begin(31250);
     SPI.begin();
     
-
+  SPI.setMOSI(11);
+  SPI.setSCK(13);
 
 
    tableAddrWidth = numBits(samplesPerCycle - 1);  // (samples -1) because we index from 0 to (samples -1)
@@ -274,49 +281,93 @@ void mux() {
   digitalWrite(14, LOW);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
- mux0 = analogRead(17);
- dacWrite1(dacthing, 0);
 
+   dacWrite1(dacthing, 0);
+ dacWrite1(2875, 1);
+ mux0 = analogRead(22);
+
+   digitalWrite(14, LOW);
+  digitalWrite(15, LOW);
+  digitalWrite(16,  LOW);   
+
+   dacWrite1(dacthing, 0);
+ dacWrite1(2875, 1);
+ mux0 = analogRead(22);
+
+
+  //vco1
+ //dacWrite1((round(lfoamp/1000)*dacthing), 0);
+//dacWrite1(dacthing, 0);
+ //dacWrite1(4000, 0);
+  //dacWrite1(4000, 1);
  //dacWrite2(0);
  digitalWrite(14, LOW);
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
- mux1 = analogRead(17);
+ mux1 = analogRead(22);
+ //dacWrite1(4000, 0);
  //dacthing = 2600;
  //dacWrite1(dacthing, 0);
-  dacWrite1(round(2700-envelope), 0);
- // dacWrite1(0, 0);
+  //dacWrite1(round(2700-envelope), 0);
+ //dacWrite1(4000, 0);
+ //dacWrite1(2500, 1);
 
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
- mux2 = analogRead(17);
- dacWrite1(4*mux4, 0); //filter cutoff
- 
+ mux2 = analogRead(22);
+ //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
+ dacWrite1(0, 0);
+
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  HIGH);   
- mux3 = analogRead(17);
- dacWrite1(4*mux5, 0); //filter resonance
+ //dacWrite1(100, 0);
+  mux3 = analogRead(22);
+ //dacWrite1((4*mux5 - round(lfoamp/5)), 0); 
  digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
- mux4 = analogRead(17);
-  dacWrite1(2225, 0); //offset
+ mux4 = analogRead(22);
+  dacWrite1(0, 0);
+  //dacWrite1(4000, 1);
+  //dacWrite1(2225, 0); //offset
   digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
- mux5 = analogRead(17);
+   dacWrite1(1000+1.5*mux1, 0); //vcf2 cv
+  //  dacWrite1(dacData, 1);
+
+ mux5 = analogRead(22);
  //dacWrite1(dacthing2, 1); //voice 2 vco
- digitalWrite(14, HIGH);
+  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
- mux6 = analogRead(17);
+ mux2 = analogRead(22);
+dacWrite1(0, 0);
+ 
+ digitalWrite(14, HIGH);
+  digitalWrite(15, HIGH);
+  digitalWrite(16,  LOW);  
+ dacWrite1(0, 0); //vca2 cv 
+ mux6 = analogRead(22);
+ 
+ digitalWrite(14, LOW);
+  digitalWrite(15, HIGH);
+  digitalWrite(16,  LOW);   
+ mux2 = analogRead(22);
+dacWrite1(0, 0);
+//dacWrite1(4000, 0);
 
  digitalWrite(14, HIGH);
   digitalWrite(15, HIGH);
   digitalWrite(16,  HIGH);   
- mux7 = analogRead(17);
+  dacWrite1(mux2*4, 0); //rescv i think
+ mux7 = analogRead(22);
+  digitalWrite(14, LOW);
+  digitalWrite(15, HIGH);
+  digitalWrite(16,  LOW);   
+dacWrite1(0, 0);
 
 
 
@@ -326,10 +377,20 @@ void mux() {
 }
 
 
+
+
 void loop()
 {
+ mux();
+  digitalWrite(2, LOW);
+  digitalWrite(3, LOW);
+  //muxPot();
+   //delay(5);
+ //dacWrite1((round(lfoamp/1000)*dacthing), 0);
+//dacWrite1(dacthing, 0);
+// dacWrite1(4000, 0);
+  //dacWrite1(2000, 1);
   
-   mux();
    /*
   Serial.println("mux0 ");
 Serial.println(mux0);
@@ -375,7 +436,7 @@ Serial.println(mux7);
 MIDI.read();
 //dacthing =round(note1*68.26);
 
-
+dacthing =round(note1*70.26);
 
 
 //dacthing =note1*68.4; //add temperature sensor thing
@@ -384,9 +445,9 @@ if (note1<21) {
   dacthing = round((note1-1)*66.4+10);
 }
 */
-dacthing = round(note1*83.5);
+//dacthing = round(note1*83.5);
 if (dacthing > 4095) {
-  dacthing = dacthing - 83.5;
+  dacthing = dacthing - 70.26;
 }
 
 dacthing2 = round(note2*83.5);
@@ -421,9 +482,11 @@ if(decay == false && ((envelope>=(drive-3) && drive==21*velocity1))){// if we ar
 
 
        fOut = freq1;
+       fOut = 2000;
   tuningWord = pow(2, 32) * fOut / sampleRate;
 
   fOut2 = freq2;
+  fOut2 = 30;
   tuningWord2 = pow(2, 32) * fOut2 / sampleRate;
   phAcc += tuningWord;
   phInc = phAcc >> (32 - tableAddrWidth);
@@ -431,7 +494,11 @@ if(decay == false && ((envelope>=(drive-3) && drive==21*velocity1))){// if we ar
   phAcc2 += tuningWord2;
   phInc2 = phAcc2 >> (32 - tableAddrWidth);
   // put your main code here, t run repeatedly:
-  dacData = (sineData[phInc] >> 1) + (sineData[phInc2] >> 1);
-dacWrite1(dacData, 1);
+  //dacData = (sineData[phInc] >> 1) + (sineData[phInc2] >> 1);
+  
+  
+  //lfoamp = (sineData[phInc2] >> 1);
+  dacData = (sineData[phInc] >> 1);
+//dacWrite1(dacData, 1);
   }
   
