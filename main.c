@@ -11,12 +11,164 @@ int sineData[samplesPerCycle]  = {
 
 
 };
+
+int lfoSaw[1024] = {
+
+        0,     8,    16,    23,    31,    39,    47,
+    55,    63,    70,    78,    86,    94,   102,
+   109,   117,   125,   133,   141,   148,   156,
+   164,   172,   180,   188,   195,   203,   211,
+   219,   227,   234,   242,   250,   258,   266,
+   273,   281,   289,   297,   305,   313,   320,
+   328,   336,   344,   352,   359,   367,   375,
+   383,   391,   398,   406,   414,   422,   430,
+   438,   445,   453,   461,   469,   477,   484,
+   492,   500,   508,   516,   523,   531,   539,
+   547,   555,   563,   570,   578,   586,   594,
+   602,   609,   617,   625,   633,   641,   648,
+   656,   664,   672,   680,   688,   695,   703,
+   711,   719,   727,   734,   742,   750,   758,
+   766,   773,   781,   789,   797,   805,   813,
+   820,   828,   836,   844,   852,   859,   867,
+   875,   883,   891,   898,   906,   914,   922,
+   930,   938,   945,   953,   961,   969,   977,
+   984,   992,  1000,  1008,  1016,  1023,  1031,
+  1039,  1047,  1055,  1063,  1070,  1078,  1086,
+  1094,  1102,  1109,  1117,  1125,  1133,  1141,
+  1148,  1156,  1164,  1172,  1180,  1188,  1195,
+  1203,  1211,  1219,  1227,  1234,  1242,  1250,
+  1258,  1266,  1273,  1281,  1289,  1297,  1305,
+  1313,  1320,  1328,  1336,  1344,  1352,  1359,
+  1367,  1375,  1383,  1391,  1398,  1406,  1414,
+  1422,  1430,  1438,  1445,  1453,  1461,  1469,
+  1477,  1484,  1492,  1500,  1508,  1516,  1523,
+  1531,  1539,  1547,  1555,  1563,  1570,  1578,
+  1586,  1594,  1602,  1609,  1617,  1625,  1633,
+  1641,  1648,  1656,  1664,  1672,  1680,  1688,
+  1695,  1703,  1711,  1719,  1727,  1734,  1742,
+  1750,  1758,  1766,  1773,  1781,  1789,  1797,
+  1805,  1813,  1820,  1828,  1836,  1844,  1852,
+  1859,  1867,  1875,  1883,  1891,  1898,  1906,
+  1914,  1922,  1930,  1938,  1945,  1953,  1961,
+  1969,  1977,  1984,  1992,  2000,  2008,  2016,
+  2023,  2031,  2039,  2047,  2055,  2062,  2070,
+  2078,  2086,  2094,  2102,  2109,  2117,  2125,
+  2133,  2141,  2148,  2156,  2164,  2172,  2180,
+  2187,  2195,  2203,  2211,  2219,  2227,  2234,
+  2242,  2250,  2258,  2266,  2273,  2281,  2289,
+  2297,  2305,  2312,  2320,  2328,  2336,  2344,
+  2352,  2359,  2367,  2375,  2383,  2391,  2398,
+  2406,  2414,  2422,  2430,  2437,  2445,  2453,
+  2461,  2469,  2477,  2484,  2492,  2500,  2508,
+  2516,  2523,  2531,  2539,  2547,  2555,  2562,
+  2570,  2578,  2586,  2594,  2602,  2609,  2617,
+  2625,  2633,  2641,  2648,  2656,  2664,  2672,
+  2680,  2687,  2695,  2703,  2711,  2719,  2727,
+  2734,  2742,  2750,  2758,  2766,  2773,  2781,
+  2789,  2797,  2805,  2812,  2820,  2828,  2836,
+  2844,  2852,  2859,  2867,  2875,  2883,  2891,
+  2898,  2906,  2914,  2922,  2930,  2937,  2945,
+  2953,  2961,  2969,  2977,  2984,  2992,  3000,
+  3008,  3016,  3023,  3031,  3039,  3047,  3055,
+  3062,  3070,  3078,  3086,  3094,  3102,  3109,
+  3117,  3125,  3133,  3141,  3148,  3156,  3164,
+  3172,  3180,  3187,  3195,  3203,  3211,  3219,
+  3227,  3234,  3242,  3250,  3258,  3266,  3273,
+  3281,  3289,  3297,  3305,  3312,  3320,  3328,
+  3336,  3344,  3352,  3359,  3367,  3375,  3383,
+  3391,  3398,  3406,  3414,  3422,  3430,  3437,
+  3445,  3453,  3461,  3469,  3477,  3484,  3492,
+  3500,  3508,  3516,  3523,  3531,  3539,  3547,
+  3555,  3562,  3570,  3578,  3586,  3594,  3602,
+  3609,  3617,  3625,  3633,  3641,  3648,  3656,
+  3664,  3672,  3680,  3687,  3695,  3703,  3711,
+  3719,  3727,  3734,  3742,  3750,  3758,  3766,
+  3773,  3781,  3789,  3797,  3805,  3812,  3820,
+  3828,  3836,  3844,  3852,  3859,  3867,  3875,
+  3883,  3891,  3898,  3906,  3914,  3922,  3930,
+  3937,  3945,  3953,  3961,  3969,  3977,  3984,
+  3992,  4000,  3992,  3984,  3977,  3969,  3961,
+  3953,  3945,  3937,  3930,  3922,  3914,  3906,
+  3898,  3891,  3883,  3875,  3867,  3859,  3852,
+  3844,  3836,  3828,  3820,  3812,  3805,  3797,
+  3789,  3781,  3773,  3766,  3758,  3750,  3742,
+  3734,  3727,  3719,  3711,  3703,  3695,  3687,
+  3680,  3672,  3664,  3656,  3648,  3641,  3633,
+  3625,  3617,  3609,  3602,  3594,  3586,  3578,
+  3570,  3562,  3555,  3547,  3539,  3531,  3523,
+  3516,  3508,  3500,  3492,  3484,  3477,  3469,
+  3461,  3453,  3445,  3437,  3430,  3422,  3414,
+  3406,  3398,  3391,  3383,  3375,  3367,  3359,
+  3352,  3344,  3336,  3328,  3320,  3312,  3305,
+  3297,  3289,  3281,  3273,  3266,  3258,  3250,
+  3242,  3234,  3227,  3219,  3211,  3203,  3195,
+  3187,  3180,  3172,  3164,  3156,  3148,  3141,
+  3133,  3125,  3117,  3109,  3102,  3094,  3086,
+  3078,  3070,  3062,  3055,  3047,  3039,  3031,
+  3023,  3016,  3008,  3000,  2992,  2984,  2977,
+  2969,  2961,  2953,  2945,  2937,  2930,  2922,
+  2914,  2906,  2898,  2891,  2883,  2875,  2867,
+  2859,  2852,  2844,  2836,  2828,  2820,  2812,
+  2805,  2797,  2789,  2781,  2773,  2766,  2758,
+  2750,  2742,  2734,  2727,  2719,  2711,  2703,
+  2695,  2687,  2680,  2672,  2664,  2656,  2648,
+  2641,  2633,  2625,  2617,  2609,  2602,  2594,
+  2586,  2578,  2570,  2562,  2555,  2547,  2539,
+  2531,  2523,  2516,  2508,  2500,  2492,  2484,
+  2477,  2469,  2461,  2453,  2445,  2437,  2430,
+  2422,  2414,  2406,  2398,  2391,  2383,  2375,
+  2367,  2359,  2352,  2344,  2336,  2328,  2320,
+  2312,  2305,  2297,  2289,  2281,  2273,  2266,
+  2258,  2250,  2242,  2234,  2227,  2219,  2211,
+  2203,  2195,  2187,  2180,  2172,  2164,  2156,
+  2148,  2141,  2133,  2125,  2117,  2109,  2102,
+  2094,  2086,  2078,  2070,  2062,  2055,  2047,
+  2039,  2031,  2023,  2016,  2008,  2000,  1992,
+  1984,  1977,  1969,  1961,  1953,  1945,  1938,
+  1930,  1922,  1914,  1906,  1898,  1891,  1883,
+  1875,  1867,  1859,  1852,  1844,  1836,  1828,
+  1820,  1813,  1805,  1797,  1789,  1781,  1773,
+  1766,  1758,  1750,  1742,  1734,  1727,  1719,
+  1711,  1703,  1695,  1688,  1680,  1672,  1664,
+  1656,  1648,  1641,  1633,  1625,  1617,  1609,
+  1602,  1594,  1586,  1578,  1570,  1563,  1555,
+  1547,  1539,  1531,  1523,  1516,  1508,  1500,
+  1492,  1484,  1477,  1469,  1461,  1453,  1445,
+  1438,  1430,  1422,  1414,  1406,  1398,  1391,
+  1383,  1375,  1367,  1359,  1352,  1344,  1336,
+  1328,  1320,  1313,  1305,  1297,  1289,  1281,
+  1273,  1266,  1258,  1250,  1242,  1234,  1227,
+  1219,  1211,  1203,  1195,  1188,  1180,  1172,
+  1164,  1156,  1148,  1141,  1133,  1125,  1117,
+  1109,  1102,  1094,  1086,  1078,  1070,  1063,
+  1055,  1047,  1039,  1031,  1023,  1016,  1008,
+  1000,   992,   984,   977,   969,   961,   953,
+   945,   938,   930,   922,   914,   906,   898,
+   891,   883,   875,   867,   859,   852,   844,
+   836,   828,   820,   813,   805,   797,   789,
+   781,   773,   766,   758,   750,   742,   734,
+   727,   719,   711,   703,   695,   688,   680,
+   672,   664,   656,   648,   641,   633,   625,
+   617,   609,   602,   594,   586,   578,   570,
+   563,   555,   547,   539,   531,   523,   516,
+   508,   500,   492,   484,   477,   469,   461,
+   453,   445,   438,   430,   422,   414,   406,
+   398,   391,   383,   375,   367,   359,   352,
+   344,   336,   328,   320,   313,   305,   297,
+   289,   281,   273,   266,   258,   250,   242,
+   234,   227,   219,   211,   203,   195,   188,
+   180,   172,   164,   156,   148,   141,   133,
+   125,   117,   109,   102,    94,    86,    78,
+    70,    63,    55,    47,    39,    31,    23,
+    16,     8  
+};
+float lfoFreq = 0.0;
 const float sampleRate = 44100.0;    // sample rate 44.1KHz
 float fOut, fOut2;                          // target output frequency (Hz)
 
-volatile int phInc, phInc2;                  // dds phase increment
-volatile unsigned long phAcc, phAcc2;        // dds phase accumulator
-unsigned long tuningWord, tuningWord2;            // dds tuning word (M)
+volatile int phInc, phInc2, phIncLFO;                  // dds phase increment
+volatile unsigned long phAcc, phAcc2, phAccLFO;        // dds phase accumulator
+unsigned long tuningWord, tuningWord2, tuningWordLFO;            // dds tuning word (M)
 
 byte tableAddrWidth;
 int dacData = 0;                     // dac output data
@@ -279,12 +431,23 @@ fOut = 1000.0;                                  // set output frequency in Hz
 
 //int tempbuffer= 0;
 void mux() {
+
+  
+   digitalWrite(14, HIGH);
+  digitalWrite(15, LOW);
+  digitalWrite(16,  LOW);   
+  dacWrite1(dacthing, 0);//vco2 cv or smth
+
+
+ mux1 = analogRead(22); 
+ mux1A = analogRead(23);
   digitalWrite(14, LOW);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
 
-   dacWrite1(dacthing, 0);
- dacWrite1(2875, 1);
+     dacWrite1(dacthing, 0);
+
+ dacWrite1(2780, 1);
  mux0 = analogRead(22);
  mux0A = analogRead(23);
 
@@ -293,10 +456,25 @@ void mux() {
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
 
-   dacWrite1(dacthing, 0);
- dacWrite1(2875, 1);
+
+
+     dacWrite1(dacthing, 0);
+
+
+ dacWrite1(2780, 1);
  mux0 = analogRead(22);
  mux0A = analogRead(23);
+
+
+
+   digitalWrite(14, HIGH);
+  digitalWrite(15, LOW);
+  digitalWrite(16,  LOW);   
+  dacWrite1(dacthing, 0);//vco2 cv or smth
+
+
+ mux1 = analogRead(22); 
+ mux1A = analogRead(23);
 
   //vco1
  //dacWrite1((round(lfoamp/1000)*dacthing), 0);
@@ -304,54 +482,64 @@ void mux() {
  //dacWrite1(4000, 0);
   //dacWrite1(4000, 1);
  //dacWrite2(0);
- digitalWrite(14, LOW);
-  digitalWrite(15, LOW);
-  digitalWrite(16,  HIGH);   
- mux1 = analogRead(22);
 
- //dacWrite1(4000, 0);
- //dacthing = 2600;
- //dacWrite1(dacthing, 0);
-  //dacWrite1(round(2700-envelope), 0);
- //dacWrite1(4000, 0);
- //dacWrite1(2500, 1);
 
- digitalWrite(14, LOW);
-  digitalWrite(15, HIGH);
-  digitalWrite(16,  LOW);   
- mux2 = analogRead(22);
- mux2A = analogRead(23);
- //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
- dacWrite1(0, 0);
 
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  HIGH);   
  //dacWrite1(100, 0);
   mux3 = analogRead(22);
+  dacWrite1(mux2*4, 0); //res cv1??
  //dacWrite1((4*mux5 - round(lfoamp/5)), 0); 
- digitalWrite(14, HIGH);
-  digitalWrite(15, LOW);
+ digitalWrite(14, LOW);
+  digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
- mux4 = analogRead(22);
- mux1A = analogRead(23);
-  dacWrite1(0, 0);
+   dacWrite1(0, 0); //vca cv1??
+ mux2 = analogRead(22);
+ mux2A = analogRead(23);
+ //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
+
+
+
+
+ digitalWrite(14, LOW);
+  digitalWrite(15, HIGH);
+  digitalWrite(16,  HIGH);   
+ //dacWrite1(100, 0);
+  mux3 = analogRead(22);
+  dacWrite1(mux2*4, 0); //res cv1??
+ //dacWrite1((4*mux5 - round(lfoamp/5)), 0); 
+
    
   //dacWrite1(4000, 1);
   //dacWrite1(2225, 0); //offset
   digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
-   dacWrite1(1000+1.5*mux1, 0); //vcf2 cv
+  //dacWrite1(0, 1);
+  if (mux1<400) {
+   dacWrite1(round(1700+(1.5*mux4)*lfoamp/2000), 0); //vcf2 cv
     //dacWrite1(dacData, 1);
-
+  }
+  else {
+dacWrite1(1000+1.5*mux4, 0);
+  }
  mux5 = analogRead(22);
  //dacWrite1(dacthing2, 1); //voice 2 vco
   digitalWrite(14, LOW);
-  digitalWrite(15, HIGH);
-  digitalWrite(16,  LOW);   
- mux2 = analogRead(22);
-dacWrite1(0, 0);
+  digitalWrite(15, LOW);
+  digitalWrite(16,  HIGH);   
+ mux4 = analogRead(22);
+ dacWrite1(1000+1.5*mux4, 0); //vcf cv1??
+ //dacWrite1(0, 1);
+ //dacWrite1(4000, 0);
+ //dacthing = 2600;
+ //dacWrite1(dacData, 1);
+  //dacWrite1(round(2700-envelope), 0);
+ //dacWrite1(4000, 0);
+ //dacWrite1(2500, 1);
+
  
  digitalWrite(14, HIGH);
   digitalWrite(15, HIGH);
@@ -360,24 +548,21 @@ dacWrite1(0, 0);
   mux3A = analogRead(23);
  mux6 = analogRead(22);
  
- digitalWrite(14, LOW);
-  digitalWrite(15, HIGH);
-  digitalWrite(16,  LOW);   
- mux2 = analogRead(22);
-dacWrite1(0, 0);
-//dacWrite1(4000, 0);
+
 
  digitalWrite(14, HIGH);
   digitalWrite(15, HIGH);
   digitalWrite(16,  HIGH);   
   dacWrite1(mux2*4, 0); //rescv i think
  mux7 = analogRead(22);
-  digitalWrite(14, LOW);
+
+ digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
-  digitalWrite(16,  LOW);   
-dacWrite1(0, 0);
-
-
+  digitalWrite(16,  HIGH);   
+  dacWrite1(mux2*4, 0); //res cv1??
+ //dacWrite1(100, 0);
+  mux3 = analogRead(22);
+  
 
  
 
@@ -444,8 +629,34 @@ Serial.println(mux7);
 MIDI.read();
 //dacthing =round(note1*68.26);
 
-dacthing =round(note1*70.26);
+//dacthing =round(note1*70.26);
+if (note1 >= 24) {
+if (mux1>400 && mux1 < 800) {
+    dacthing =round(note1*75.26*(0.5 + lfoamp/4000));
+}
+else {
+     dacthing =round(note1*75.00);
 
+}
+}
+else if (note1>10 && note1<24) {
+  if (mux1>400 && mux1 < 800) {
+    dacthing =round(note1*75.26*(0.5 + lfoamp/4000));
+}
+else {
+     dacthing =round(note1*73.00 + 50);
+
+}
+}
+else {
+  if (mux1>400 && mux1 < 800) {
+    dacthing =round(note1*75.26*(0.5 + lfoamp/4000));
+}
+else {
+     dacthing =round(note1*69.00 + 75);
+
+}
+}
 
 //dacthing =note1*68.4; //add temperature sensor thing
 /*
@@ -455,7 +666,7 @@ if (note1<21) {
 */
 //dacthing = round(note1*83.5);
 if (dacthing > 4095) {
-  dacthing = dacthing - 70.26;
+  dacthing = dacthing - 75.00;
 }
 
 dacthing2 = round(note2*83.5);
@@ -474,7 +685,7 @@ if (envelope<4.0) {
 dacWrite3(round(freq2*0.97783686));
 envelopeA=((1.0-alphaA)*driveA+alphaA*envelopeA);
 //dacWrite4(round(envelopeA));
-Serial.println(envelope);
+//Serial.println(mux1);
 
 
 
@@ -490,11 +701,11 @@ if(decay == false && ((envelope>=(drive-3) && drive==21*velocity1))){// if we ar
 
 
        fOut = freq1;
-       fOut = 2000;
+       //fOut = 2000;
   tuningWord = pow(2, 32) * fOut / sampleRate;
 
   fOut2 = freq2;
-  fOut2 = 30;
+  //fOut2 = 30;
   tuningWord2 = pow(2, 32) * fOut2 / sampleRate;
   phAcc += tuningWord;
   phInc = phAcc >> (32 - tableAddrWidth);
@@ -505,8 +716,13 @@ if(decay == false && ((envelope>=(drive-3) && drive==21*velocity1))){// if we ar
   //dacData = (sineData[phInc] >> 1) + (sineData[phInc2] >> 1);
   
   
-  //lfoamp = (sineData[phInc2] >> 1);
+  lfoFreq = mux0/5;
+  tuningWordLFO = pow(2, 32) * lfoFreq / sampleRate;
+  phAccLFO += tuningWordLFO;
+  phIncLFO = phAccLFO >> (32 - tableAddrWidth);
+  lfoamp = (lfoSaw[phIncLFO] >> 1);
   dacData = (sineData[phInc] >> 1);
 //dacWrite1(dacData, 1);
+
   }
   
