@@ -286,7 +286,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   
 
   v = v+1;
-   if (v>1){
+   if (v>2){
    
 v = 1;
   }
@@ -309,7 +309,7 @@ v = 1;
     break;
     
     case 2: 
-    note2 = note - 2;
+    note2 = note + 1; //note - 2;
     freq2 = 440.00*(pow(2,((note-69.00)/12.00)));
     break;
     /*
@@ -346,7 +346,7 @@ if(decayA == false && ((envelopeA>3999 && driveA==4000) || (envelopeA<96 && driv
 void myNoteOff(byte channel, byte note, byte velocity) {
     digitalWrite(2, LOW);
   w = w +1;
-  if (w>1) {
+  if (w>2) {
     w=1;
   }
   switch (w) {
@@ -433,14 +433,7 @@ fOut = 1000.0;                                  // set output frequency in Hz
 void mux() {
 
   
-   digitalWrite(14, HIGH);
-  digitalWrite(15, LOW);
-  digitalWrite(16,  LOW);   
-  dacWrite1(dacthing, 0);//vco2 cv or smth
 
-
- mux1 = analogRead(22); 
- mux1A = analogRead(23);
   digitalWrite(14, LOW);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
@@ -470,7 +463,16 @@ void mux() {
    digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
-  dacWrite1(dacthing, 0);//vco2 cv or smth
+  dacWrite1(dacthing2, 0);//vco2 cv or smth
+
+
+ mux1 = analogRead(22); 
+ mux1A = analogRead(23);
+
+    digitalWrite(14, HIGH);
+  digitalWrite(15, LOW);
+  digitalWrite(16,  LOW);   
+  dacWrite1(dacthing2, 0);//vco2 cv or smth
 
 
  mux1 = analogRead(22); 
@@ -559,7 +561,8 @@ dacWrite1(1000+1.5*mux4, 0);
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  HIGH);   
-  dacWrite1(mux2*4, 0); //res cv1??
+  dacWrite1(0, 0); //res cv1??
+  //Serial.println(mux2*4);
  //dacWrite1(100, 0);
   mux3 = analogRead(22);
   
@@ -665,13 +668,11 @@ if (note1<21) {
 }
 */
 //dacthing = round(note1*83.5);
-if (dacthing > 4095) {
-  dacthing = dacthing - 75.00;
-}
 
-dacthing2 = round(note2*83.5);
+
+dacthing2 = round(note2*75.00 -10);
 if (dacthing2 > 4095) {
-  dacthing2 = dacthing - 83.5;
+  dacthing2 = dacthing - 75.00;
 }
 
 
