@@ -262,7 +262,7 @@ double alphaA1=0.9;  // initial value for attack
 double alphaA2=0.9;  // initial value for decay
 double alphaA3=0.95; // initial value for release
 
-int velocity1 = 0;
+int velocity1, velocity2 = 0;
 
 boolean decay = false;
 boolean decayA = false;
@@ -286,22 +286,22 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   
 
   v = v+1;
-   if (v>2){
+   if (v>1){
    
 v = 1;
   }
   switch (v) {
     case 1:
     velocity1 = velocity;
-    note1 = note;
+    note1 = note; //'- 1;
     freq1 = 440.00*(pow(2,(((note+60.00)-69.00)/12.00)));
     //Serial.println(round(freq1));
     //Serial.println(velocity);
     
 
 
-    //drive=2703;
-    drive=(21*velocity1);
+    drive=2700;
+    //drive=(21*velocity1);
     alpha=alpha1; 
     decay = false;
 
@@ -309,8 +309,14 @@ v = 1;
     break;
     
     case 2: 
-    note2 = note + 1; //note - 2;
+    velocity2 = velocity;
+    note2 = note; //note - 2;
     freq2 = 440.00*(pow(2,((note-69.00)/12.00)));
+
+       // driveA=(21*velocity2);
+       driveA = 2700; 
+    alphaA=alphaA1; 
+    decayA = false;
     break;
     /*
     case 2: 
@@ -346,7 +352,7 @@ if(decayA == false && ((envelopeA>3999 && driveA==4000) || (envelopeA<96 && driv
 void myNoteOff(byte channel, byte note, byte velocity) {
     digitalWrite(2, LOW);
   w = w +1;
-  if (w>2) {
+  if (w>1) {
     w=1;
   }
   switch (w) {
@@ -361,6 +367,11 @@ void myNoteOff(byte channel, byte note, byte velocity) {
     
     break;
      case 2: 
+
+
+            driveA=0;                              // drive towards zero
+    alphaA=alphaA3;                         // set 'time constant' alpha3 for release phase
+
                             // set 'time constant' alpha3 for release phase
 
 break;
@@ -497,7 +508,7 @@ void mux() {
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
-   dacWrite1(0, 0); //vca cv1??
+   dacWrite1(2700 - envelopeA, 0); //vca cv1??
  mux2 = analogRead(22);
  mux2A = analogRead(23);
  //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
