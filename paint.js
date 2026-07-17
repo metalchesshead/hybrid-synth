@@ -42,6 +42,7 @@ document.getElementById("num").innerText = coords.length;
 
 function clearCanvas() {
     context.clearRect(0, 0, board.width, board.height);
+	log("ii");
 }
 
 function canvasWidth() {
@@ -66,6 +67,17 @@ function exportAdjacency() {
 
 
         }
+		document.querySelector('#uart-thingy').addEventListener('click', async () => {
+  // Prompt user to select any serial port.
+  const port = await navigator.serial.requestPort();
+  //log("heo");
+  await port.open({ baudRate: 31250 });
+  const writer = port.writable.getWriter();
+
+const data = new Uint8Array(coords); // hello
+await writer.write(data);
+
+});
 /*
 function downloadImage() {
     const imageLink = document.createElement("a");
