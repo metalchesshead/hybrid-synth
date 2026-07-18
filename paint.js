@@ -1,7 +1,8 @@
 const board = document.getElementById("board");
 const context = board.getContext("2d");
-
+//const rect = board.getBoundingClientRect();
 var coords = [];
+var xsamp = [];
 
 let isDrawing = false;
 const clearButton = document.getElementById("clear-button");
@@ -25,6 +26,7 @@ enterButton.addEventListener("click", canvasWidth);
 
 
 function draw(e) { //e = event, contains mouse click, position, etc information
+try {
     if (!isDrawing) return;
 
     context.lineWidth = "10";
@@ -35,38 +37,62 @@ function draw(e) { //e = event, contains mouse click, position, etc information
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
-coords.push([Math.round(5000 - 10*(e.offsetY+20))])
-
-document.getElementById("num").innerText = coords.length;
+coords.push([Math.round(5000 - 10*(e.offsetY+20))]);
+//coords[Math.round(e.offsetX)] = Math.round(5000 - 10*(e.offsetY+20);
+//log(e.offsetX);
+//document.getElementById("num").innerText = coords.length;
+}
+catch(error) {
+	log('error');
+	
+}
 }
 
 function clearCanvas() {
     context.clearRect(0, 0, board.width, board.height);
-	log("ii");
+	//log("ii");
 }
 
 function canvasWidth() {
 var board = document.getElementById('board');  
 board.width = sampleSize.value;
+
 }
 
 function exportAdjacency() {
+/*for (let i=0; i<sampleSize.value; i++){
+	if (i>coords.length) {
+		xsamp[i] = 1234;
+		//xsamp[i] = coords[i];
+	
+	}
+	else {
+		//xsamp[i] = coords[i];
+		xsamp[i] = 1234;
+	}
+}
+        */
 
-            
+while (coords.length<sampleSize.value) {
+	coords.push([0]);
+}	
 
-
+/*
             const csvContent = `data:text/csv;charset=utf-8,${coords
                 .map((e) => e.join(","))
                 .join(", ")}`;
-            const encodedUri = encodeURI(csvContent);
+*/
+const csvContent = `data:text/csv;charset=utf-8,${coords.map((e) => e.join(",")).join(", ")}`;
+  
+  const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", "data.txt");
             document.body.appendChild(link);
             link.click()
-
-
         }
+		
+		
 		document.querySelector('#uart-thingy').addEventListener('click', async () => {
   // Prompt user to select any serial port.
   const port = await navigator.serial.requestPort();
