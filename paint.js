@@ -5,6 +5,7 @@ var coords = [];
 var xsamp = [];
 
 let isDrawing = false;
+let isConnected = false;
 const clearButton = document.getElementById("clear-button");
 const downloadButton = document.getElementById("download-button");
 var sampleSize = document.getElementById("samples");
@@ -95,11 +96,28 @@ const csvContent = `data:text/csv;charset=utf-8,${coords.map((e) => e.join(","))
         }
 		
 		
+		
+		
+		
 		document.querySelector('#uart-thingy').addEventListener('click', async () => {
+			
+			while (coords.length<sampleSize.value) {
+	coords.push([0]);
+}	
+while (coords.length>sampleSize.value) {
+	coords.pop(0,-1);
+}
+	//coords.unshift(sampleSize.value);
+
   // Prompt user to select any serial port.
+
   const port = await navigator.serial.requestPort();
   //log("heo");
+  //  if (isConnected ==false) {
+ 
   await port.open({ baudRate: 31250 });
+  //isConnected= true;
+  //}
   const writer = port.writable.getWriter();
 
 const data = new Uint8Array(coords); // hello
