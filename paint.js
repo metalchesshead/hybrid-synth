@@ -76,7 +76,9 @@ function exportAdjacency() {
 while (coords.length<sampleSize.value) {
 	coords.push([0]);
 }	
-
+while (coords.length>sampleSize.value) {
+	coords.pop(0,-1);
+}
 /*
             const csvContent = `data:text/csv;charset=utf-8,${coords
                 .map((e) => e.join(","))
