@@ -1,8 +1,19 @@
 #include <MIDI.h>
 #include <SPI.h>
 #include <Arduino.h>
-#define samplesPerCycle 761
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+#define samplesPerCycle 761
+uint8_t uartdata[10]; 
+//int sizee;
 // data table for one cycle of sine wave
 int sineData[samplesPerCycle]  = {
     
@@ -282,6 +293,7 @@ void myNoteOn(byte channel, byte note, byte velocity) {
   
   Serial.println(note);
   Serial.println("hi");
+ 
   //freq = 440.00*(pow(2,((note-69.00)/12.00)));
   
 
@@ -300,8 +312,8 @@ v = 1;
     
 
 
-    drive=2700;
-    //drive=(21*velocity1);
+    //drive=2701;
+    drive=(21*velocity1);
     alpha=alpha1; 
     decay = false;
 
@@ -350,7 +362,7 @@ if(decayA == false && ((envelopeA>3999 && driveA==4000) || (envelopeA<96 && driv
 
 
 void myNoteOff(byte channel, byte note, byte velocity) {
-    digitalWrite(2, LOW);
+    //digitalWrite(2, LOW);
   w = w +1;
   if (w>1) {
     w=1;
@@ -416,6 +428,7 @@ pinMode(6, OUTPUT);
     pinMode(14, OUTPUT);
     pinMode(15, OUTPUT);
     pinMode(16, OUTPUT);
+    pinMode(21, INPUT);
     pinMode(22, INPUT);
     //pinMode(0, INPUT);
   digitalWrite(6, HIGH);
@@ -430,6 +443,7 @@ pinMode(6, OUTPUT);
   SPI.setMOSI(11);
   SPI.setSCK(13);
 
+  
 
    tableAddrWidth = numBits(samplesPerCycle - 1);  // (samples -1) because we index from 0 to (samples -1)
 
@@ -437,6 +451,29 @@ fOut = 1000.0;                                  // set output frequency in Hz
   tuningWord = pow(2, 32) * fOut / sampleRate;    // DDS tuning word for target frequency
    fOut2 = 500.0;                                  // set output frequency in Hz
   tuningWord2 = pow(2, 32) * fOut2 / sampleRate;
+
+
+  //if (analogRead(21)<500)  {
+    Serial2.begin(31250);
+
+  //}
+
+
+    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+    display.clearDisplay();
+
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.println("Booting...");
+    display.display();
+    delay(1000);
+    display.clearDisplay();
+
 }
 
 
@@ -474,7 +511,7 @@ void mux() {
    digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
-  dacWrite1(dacthing2, 0);//vco2 cv or smth
+  //dacWrite1(dacthing2, 0);//vco2 cv or smth
 
 
  mux1 = analogRead(22); 
@@ -483,7 +520,7 @@ void mux() {
     digitalWrite(14, HIGH);
   digitalWrite(15, LOW);
   digitalWrite(16,  LOW);   
-  dacWrite1(dacthing2, 0);//vco2 cv or smth
+ // dacWrite1(dacthing2, 0);//vco2 cv or smth
 
 
  mux1 = analogRead(22); 
@@ -503,12 +540,12 @@ void mux() {
   digitalWrite(16,  HIGH);   
  //dacWrite1(100, 0);
   mux3 = analogRead(22);
-  dacWrite1(mux2*4, 0); //res cv1??
+  //dacWrite1(mux2*4, 0); //res cv1??
  //dacWrite1((4*mux5 - round(lfoamp/5)), 0); 
  digitalWrite(14, LOW);
   digitalWrite(15, HIGH);
   digitalWrite(16,  LOW);   
-   dacWrite1(2700 - envelopeA, 0); //vca cv1??
+   //dacWrite1(2700 - envelopeA, 0); //vca cv1??
  mux2 = analogRead(22);
  mux2A = analogRead(23);
  //dacWrite1((4*mux4 - round(lfoamp/5)), 0); 
@@ -521,7 +558,7 @@ void mux() {
   digitalWrite(16,  HIGH);   
  //dacWrite1(100, 0);
   mux3 = analogRead(22);
-  dacWrite1(mux2*4, 0); //res cv1??
+  //dacWrite1(mux2*4, 0); //res cv1??
  //dacWrite1((4*mux5 - round(lfoamp/5)), 0); 
 
    
@@ -544,8 +581,8 @@ dacWrite1(1000+1.5*mux4, 0);
   digitalWrite(15, LOW);
   digitalWrite(16,  HIGH);   
  mux4 = analogRead(22);
- dacWrite1(1000+1.5*mux4, 0); //vcf cv1??
- //dacWrite1(0, 1);
+ //dacWrite1(1000+1.5*mux4, 0); //vcf cv1??
+ dacWrite1(0, 0);
  //dacWrite1(4000, 0);
  //dacthing = 2600;
  //dacWrite1(dacData, 1);
@@ -588,9 +625,50 @@ dacWrite1(1000+1.5*mux4, 0);
 
 void loop()
 {
- mux();
+
+if (analogRead(21) >1000) {
   digitalWrite(2, LOW);
   digitalWrite(3, LOW);
+}
+else if (analogRead(21) >750 && analogRead(21)<1000){
+  digitalWrite(2, LOW);
+  digitalWrite(3, HIGH);
+
+}
+else if (analogRead(21) >500 && analogRead(21)<750){
+  digitalWrite(2, HIGH);
+  digitalWrite(3, LOW);
+
+}
+else {
+
+//delay(500);
+
+}
+ if (Serial2.available() > 0) {
+ display.clearDisplay();
+  //int sizee = Serial2.read();
+  for (int i =0; i<10; i++) {
+    
+    while (Serial2.available()==0) {
+
+    }
+    uartdata[i] = Serial2.read();
+  
+  }
+
+  for (int i =0; i<10; i++) {
+    display.drawPixel(i, 40, WHITE);
+     Serial.println(uartdata[i] );
+  }
+
+
+
+ }
+ mux();
+
+
+ //Serial.println(analogRead(21));
   //muxPot();
    //delay(5);
  //dacWrite1((round(lfoamp/1000)*dacthing), 0);
