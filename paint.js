@@ -120,8 +120,14 @@ while (coords.length>sampleSize.value) {
   //}
   const writer = port.writable.getWriter();
 
-const data = new Uint8Array(coords); // hello
+const data = new Uint16Array(coords.slice(0,25)); // hello
 await writer.write(data);
+log(data);
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+await delay(1000);
+const data1 = new Uint16Array(coords.slice(25,50)); // hello
+await writer.write(data1);
+log(data1);
 
 });
 /*
