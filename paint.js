@@ -128,6 +128,15 @@ await delay(1000);
 const data1 = new Uint16Array(coords.slice(25,50)); // hello
 await writer.write(data1);
 log(data1);
+await delay(1000);
+const data2 = new Uint16Array(coords.slice(50,75)); // hello
+await writer.write(data2);
+log(data2);
+await delay(1000);
+const data3 = new Uint16Array(coords.slice(75,100)); // hello
+await writer.write(data3);
+
+log(data3);
 
 });
 /*
