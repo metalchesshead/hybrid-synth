@@ -647,16 +647,25 @@ else {
 }
  if (Serial2.available() >=50) {
   for (int i =0; i<25; i++){
-        while (Serial2.available()==0) {
 
-    }
     byte high = Serial2.read();
     byte low = Serial2.read();
 uartdata[i]= (low << 8) | high;
 Serial.println(uartdata[i]);
-delay(100);
+//delay(100);
+
+  if (Serial2.available() >=50) {
+  for (int i =25; i<50; i++){
+
+    byte high = Serial2.read();
+    byte low = Serial2.read();
+uartdata[i]= (low << 8) | high;
+Serial.println(uartdata[i]);
+//delay(100);
 
 
+  }
+}
   }
   
   //Serial.println(Serial2.read());
@@ -684,20 +693,7 @@ delay(100);
 
 
  }
-  if (Serial2.available() >=50) {
-  for (int i =25; i<50; i++){
-        while (Serial2.available()==0) {
 
-    }
-    byte high = Serial2.read();
-    byte low = Serial2.read();
-uartdata[i]= (low << 8) | high;
-Serial.println(uartdata[i]);
-delay(100);
-
-
-  }
-}
  mux();
 
 
