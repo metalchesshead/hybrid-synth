@@ -645,9 +645,11 @@ else {
 //delay(500);
 
 }
- if (Serial2.available() >=10) {
-  for (int i =0; i<10; i++){
-    
+ if (Serial2.available() >=50) {
+  for (int i =0; i<25; i++){
+        while (Serial2.available()==0) {
+
+    }
     byte high = Serial2.read();
     byte low = Serial2.read();
 uartdata[i]= (low << 8) | high;
@@ -656,30 +658,46 @@ delay(100);
 
 
   }
+  
   //Serial.println(Serial2.read());
-  /*
+  
  display.clearDisplay();
   //int sizee = Serial2.read();
+  /*
   for (int i =0; i<1024; i++) {
     
-    while (Serial2.available()==0) {
+    //while (Serial2.available()==0) {
 
-    }
-    uartdata[i] = Serial2.read();
+    //}
+    //uartdata[i] = Serial2.read();
   Serial.println(uartdata[i] );
   }
 
   for (int i =0; i<1024; i++) {
-    //if (i%8 == 0){
-   display.drawPixel(i, round(uartdata[i]), WHITE);
+    if (i%8 == 0){
+   display.drawPixel(i/8, round(uartdata[i]/52), WHITE);
     display.display();
-  //}
-     //Serial.println(uartdata[i] );
+  }
+    // Serial.println(uartdata[i] );
   }
 */
 
 
  }
+  if (Serial2.available() >=50) {
+  for (int i =25; i<50; i++){
+        while (Serial2.available()==0) {
+
+    }
+    byte high = Serial2.read();
+    byte low = Serial2.read();
+uartdata[i]= (low << 8) | high;
+Serial.println(uartdata[i]);
+delay(100);
+
+
+  }
+}
  mux();
 
 
