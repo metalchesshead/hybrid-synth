@@ -3,6 +3,8 @@ const context = board.getContext("2d");
 //const rect = board.getBoundingClientRect();
 var coords = [];
 var xsamp = [];
+var goodcor = [];
+var temparray = [];
 
 let isDrawing = false;
 let isConnected = false;
@@ -10,6 +12,9 @@ const clearButton = document.getElementById("clear-button");
 const downloadButton = document.getElementById("download-button");
 var sampleSize = document.getElementById("samples");
 const enterButton = document.getElementById("enter-button");
+const uploadButton = document.getElementById("uploadlut");
+var lutInput = document.getElementById("lut-input");
+
 
 board.addEventListener("pointerdown", () => {isDrawing = true}); //start drawing
 board.addEventListener("pointerup", () => { //stop drawing
@@ -23,8 +28,51 @@ board.style.touchAction = "none";
 clearButton.addEventListener("click", clearCanvas);
 downloadButton.addEventListener("click", exportAdjacency);
 enterButton.addEventListener("click", canvasWidth); 
+uploadButton.addEventListener("click", uploadLut);
+function interpolateArray(data, fitCount) {
 
+    var linearInterpolate = function (before, after, atPoint) {
+        return before + (after - before) * atPoint;
+    };
 
+    var newData = new Array();
+    var springFactor = new Number((data.length - 1) / (fitCount - 1));
+    newData[0] = data[0]; // for new allocation
+    for ( var i = 1; i < fitCount - 1; i++) {
+        var tmp = i * springFactor;
+        var before = new Number(Math.floor(tmp)).toFixed();
+        var after = new Number(Math.ceil(tmp)).toFixed();
+        var atPoint = tmp - before;
+        newData[i] = linearInterpolate(data[before], data[after], atPoint);
+    }
+    newData[fitCount - 1] = data[data.length - 1]; // for new allocation
+    return newData;
+};
+	
+function uploadLut() {
+	
+
+	
+	const lutString = lutInput.value;
+	log(lutString);
+	var newArray = interpolateArray
+	for (let i=0; i<10; i++) {
+		
+
+goodcor[i] = Math.trunc(xsamp[i])
+	log(goodcor[i]);
+	
+}
+const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
+log(newarrsize);
+temparray = interpolateArray(goodcor,(goodcor[goodcor.length - 1] - goodcor[0]));
+
+for (let i=0; i<newarrsize; i++) {
+	temparray[i] = Math.trunc(temparray[i]);
+	log(temparray[i]);
+}
+
+}
 
 function draw(e) { //e = event, contains mouse click, position, etc information
 try {
@@ -33,12 +81,13 @@ try {
     context.lineWidth = "10";
     context.lineCap = "round";
     context.strokeStyle = "#FF0000";
-
+    
     context.lineTo(e.offsetX, e.offsetY); //prepares a line from the previous point to current mouse position
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
 coords.push([Math.round(5000 - 10*(e.offsetY+20))]);
+xsamp.push(e.offsetX);
 //coords[Math.round(e.offsetX)] = Math.round(5000 - 10*(e.offsetY+20);
 //log(e.offsetX);
 //document.getElementById("num").innerText = coords.length;
@@ -72,7 +121,9 @@ function exportAdjacency() {
 		xsamp[i] = 1234;
 	}
 }
-        */
+*/
+
+
 
 while (coords.length<sampleSize.value) {
 	coords.push([0]);
@@ -94,6 +145,8 @@ const csvContent = `data:text/csv;charset=utf-8,${coords.map((e) => e.join(","))
             document.body.appendChild(link);
             link.click()
         }
+		
+		
 		
 		
 		
