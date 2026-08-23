@@ -4,7 +4,8 @@ const context = board.getContext("2d");
 var coords = [];
 var xsamp = [];
 var goodcor = [];
-var temparray = [];
+var temparrayx = [];
+var temparrayy = [];
 
 let isDrawing = false;
 let isConnected = false;
@@ -55,8 +56,7 @@ function uploadLut() {
 	
 	const lutString = lutInput.value;
 	log(lutString);
-	var newArray = interpolateArray
-	for (let i=0; i<10; i++) {
+	for (let i=0; i<xsamp.length; i++) {
 		
 
 goodcor[i] = Math.trunc(xsamp[i])
@@ -65,12 +65,19 @@ goodcor[i] = Math.trunc(xsamp[i])
 }
 const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
 log(newarrsize);
-temparray = interpolateArray(goodcor,(goodcor[goodcor.length - 1] - goodcor[0]));
+//temparrayx = interpolateArray(xsamp,sampleSize.value);
+temparrayy = interpolateArray(coords,sampleSize.value);
+for (let i=0; i<sampleSize.value; i++) {
+	//temparrayx[i] = Math.trunc(temparrayx[i]);
+	temparrayy[i] = Math.trunc(temparrayy[i]);
 
-for (let i=0; i<newarrsize; i++) {
-	temparray[i] = Math.trunc(temparray[i]);
-	log(temparray[i]);
+	log(temparrayy[i]);
+	
 }
+
+
+
+
 
 }
 
@@ -86,7 +93,7 @@ try {
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
-coords.push([Math.round(5000 - 10*(e.offsetY+20))]);
+coords.push(Math.trunc(5000 - 10*(e.offsetY+20)));
 xsamp.push(e.offsetX);
 //coords[Math.round(e.offsetX)] = Math.round(5000 - 10*(e.offsetY+20);
 //log(e.offsetX);
@@ -123,21 +130,34 @@ function exportAdjacency() {
 }
 */
 
+	for (let i=0; i<xsamp.length; i++) {
+		
 
-
-while (coords.length<sampleSize.value) {
-	coords.push([0]);
-}	
-while (coords.length>sampleSize.value) {
-	coords.pop(0,-1);
+goodcor[i] = Math.trunc(xsamp[i])
+	//log(goodcor[i]);
+	
 }
-/*
-            const csvContent = `data:text/csv;charset=utf-8,${coords
-                .map((e) => e.join(","))
-                .join(", ")}`;
-*/
-const csvContent = `data:text/csv;charset=utf-8,${coords.map((e) => e.join(",")).join(", ")}`;
-  
+const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
+//temparrayx = interpolateArray(xsamp,sampleSize.value);
+temparrayy = interpolateArray(coords,sampleSize.value);
+for (let i=0; i<sampleSize.value; i++) {
+	//temparrayx[i] = Math.trunc(temparrayx[i]);
+	temparrayy[i] = [Math.trunc(temparrayy[i])];
+
+	//log(temparrayy[i]);
+	
+}
+
+while (temparrayy.length<sampleSize.value) {
+	temparrayy.push([0]);
+}	
+while (temparrayy.length>sampleSize.value) {
+	temparrayy.pop(0,-1);
+}
+
+const csvContent = `data:text/csv;charset=utf-8,${temparrayy.map((e) => e.join(",")).join(", ")}`;
+  log(newarrsize);
+
   const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
