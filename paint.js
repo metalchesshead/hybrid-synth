@@ -174,13 +174,33 @@ const csvContent = `data:text/csv;charset=utf-8,${temparrayy.map((e) => e.join("
 		
 		document.querySelector('#uart-thingy').addEventListener('click', async () => {
 			
-			while (coords.length<sampleSize.value) {
-	coords.push([0]);
-}	
-while (coords.length>sampleSize.value) {
-	coords.pop(0,-1);
+			
+			
+	for (let i=0; i<xsamp.length; i++) {
+		
+
+goodcor[i] = Math.trunc(xsamp[i])
+	//log(goodcor[i]);
+	
 }
-	//coords.unshift(sampleSize.value);
+const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
+//temparrayx = interpolateArray(xsamp,sampleSize.value);
+temparrayy = interpolateArray(coords,sampleSize.value);
+for (let i=0; i<sampleSize.value; i++) {
+	//temparrayx[i] = Math.trunc(temparrayx[i]);
+	temparrayy[i] = [Math.trunc(temparrayy[i])];
+
+	//log(temparrayy[i]);
+	
+}
+
+while (temparrayy.length<sampleSize.value) {
+	temparrayy.push([0]);
+}	
+while (temparrayy.length>sampleSize.value) {
+	temparrayy.pop(0,-1);
+}
+
 
   // Prompt user to select any serial port.
 
@@ -192,24 +212,38 @@ while (coords.length>sampleSize.value) {
   //isConnected= true;
   //}
   const writer = port.writable.getWriter();
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+var slicetemp = 0;
+const j = 0;
+delay(1000);
+for (let j=0; j<32; j++) {
+	// if (temparrayy.length - slicetemp <25) {
+		// var data = new Uint16Array(temparrayy.slice(slicetemp,(temparrayy.length))); // hello
+	// }
+	// else {
+	// var data = new Uint16Array(temparrayy.slice(slicetemp,(slicetemp + 25))); // hello
+	// }
+		var data = new Uint16Array(temparrayy.slice(slicetemp,(slicetemp + 32))); // hello
+delay(1000);
 
-const data = new Uint16Array(coords.slice(0,25)); // hello
 await writer.write(data);
 log(data);
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-await delay(1000);
-const data1 = new Uint16Array(coords.slice(25,50)); // hello
-await writer.write(data1);
-log(data1);
-await delay(1000);
-const data2 = new Uint16Array(coords.slice(50,75)); // hello
-await writer.write(data2);
-log(data2);
-await delay(1000);
-const data3 = new Uint16Array(coords.slice(75,100)); // hello
-await writer.write(data3);
+slicetemp = slicetemp + 32;
+}
 
-log(data3);
+// await delay(1000);
+// const data1 = new Uint16Array(temparrayy.slice(25,50)); // hello
+// await writer.write(data1);
+// log(data1);
+// await delay(1000);
+// const data2 = new Uint16Array(temparrayy.slice(50,75)); // hello
+// await writer.write(data2);
+// log(data2);
+// await delay(1000);
+// const data3 = new Uint16Array(temparrayy.slice(75,100)); // hello
+// await writer.write(data3);
+
+// log(data3);
 
 });
 /*
