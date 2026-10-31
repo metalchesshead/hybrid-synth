@@ -11,6 +11,7 @@ let isDrawing = false;
 let isConnected = false;
 const clearButton = document.getElementById("clear-button");
 const downloadButton = document.getElementById("download-button");
+let uartThingy = document.getElementById("uart-thingy");
 var sampleSize = document.getElementById("samples");
 const enterButton = document.getElementById("enter-button");
 const uploadButton = document.getElementById("uploadlut");
@@ -30,6 +31,7 @@ clearButton.addEventListener("click", clearCanvas);
 downloadButton.addEventListener("click", exportAdjacency);
 enterButton.addEventListener("click", canvasWidth); 
 uploadButton.addEventListener("click", uploadLut);
+uartThingy.addEventListener("click", uploadUart);
 function interpolateArray(data, fitCount) {
 
     var linearInterpolate = function (before, after, atPoint) {
@@ -93,7 +95,7 @@ try {
     context.stroke();    //draw the actual line on the canvas
     context.beginPath(); //resets the current drawing path, prevents lines from connecting unintentionally
     context.moveTo(e.offsetX, e.offsetY); //moves the pen to the new end point
-coords.push(Math.trunc(5000 - 10*(e.offsetY+20)));
+coords.push(Math.trunc(32768 - 65.5*(e.offsetY+20)));
 xsamp.push(e.offsetX);
 //coords[Math.round(e.offsetX)] = Math.round(5000 - 10*(e.offsetY+20);
 //log(e.offsetX);
@@ -107,6 +109,7 @@ catch(error) {
 
 function clearCanvas() {
     context.clearRect(0, 0, board.width, board.height);
+	
 	//log("ii");
 }
 
@@ -172,9 +175,9 @@ const csvContent = `data:text/csv;charset=utf-8,${temparrayy.map((e) => e.join("
 		
 		
 		
-		document.querySelector('#uart-thingy').addEventListener('click', async () => {
+		async function uploadUart() {
 			
-			
+			console.log('67');
 			
 	for (let i=0; i<xsamp.length; i++) {
 		
@@ -211,25 +214,69 @@ while (temparrayy.length>sampleSize.value) {
   await port.open({ baudRate: 31250 });
   //isConnected= true;
   //}
-  const writer = port.writable.getWriter();
+ 
+  
+// Listen to data coming from the serial device.
+
+  
+  
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 var slicetemp = 0;
 const j = 0;
-delay(1000);
-for (let j=0; j<32; j++) {
+//delay(1000);
+const textDecoder = new TextDecoderStream();
+const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+const reader = textDecoder.readable.getReader();
+var rec = 0;
+//for (let j=0; j<32; j++) {
+
 	// if (temparrayy.length - slicetemp <25) {
 		// var data = new Uint16Array(temparrayy.slice(slicetemp,(temparrayy.length))); // hello
 	// }
 	// else {
 	// var data = new Uint16Array(temparrayy.slice(slicetemp,(slicetemp + 25))); // hello
 	// }
-		var data = new Uint16Array(temparrayy.slice(slicetemp,(slicetemp + 32))); // hello
-delay(1000);
-
+		//var data = new Uint16Array(temparrayy.slice(slicetemp,(slicetemp + 32))); // hello
+		temparrayy.unshift(5);
+let data = new Uint16Array(temparrayy);
+console.log(data);
+const writer = port.writable.getWriter();
 await writer.write(data);
-log(data);
-slicetemp = slicetemp + 32;
-}
+rec = rec + 1;
+//log(data);
+
+
+// Listen to data coming from the serial device.
+//while (true) {
+  const { value, done } = await reader.read();
+  //reader.releaseLock();
+
+  if (done) {
+    //Allow the serial port to be closed later.
+    // reader.releaseLock();
+    // break;
+   }
+  // value is a Uint8Array.
+  //console.log(value);
+  // if (value == rec) {
+  // log("yes");
+ 
+  
+  // }
+  // else if (value != rec) {
+	  // log("no");
+	  // j = j-1;
+  // }
+  // else {
+	  // log("error");
+  // }
+  log(rec);
+  
+   slicetemp = slicetemp + 32;
+//}
+//delay(500);
+
+//}
 
 // await delay(1000);
 // const data1 = new Uint16Array(temparrayy.slice(25,50)); // hello
@@ -245,7 +292,7 @@ slicetemp = slicetemp + 32;
 
 // log(data3);
 
-});
+}
 /*
 function downloadImage() {
     const imageLink = document.createElement("a");
