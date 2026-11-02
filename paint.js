@@ -2,7 +2,7 @@ const board = document.getElementById("board");
 const context = board.getContext("2d");
 //const rect = board.getBoundingClientRect();
 var coords = [];
-var xsamp = [];
+let xsamp = [];
 var goodcor = [];
 var temparrayx = [];
 var temparrayy = [];
@@ -12,10 +12,10 @@ let isConnected = false;
 const clearButton = document.getElementById("clear-button");
 const downloadButton = document.getElementById("download-button");
 let uartThingy = document.getElementById("uart-thingy");
-var sampleSize = document.getElementById("samples");
+let sampleSize = document.getElementById("samples");
 const enterButton = document.getElementById("enter-button");
 const uploadButton = document.getElementById("uploadlut");
-var lutInput = document.getElementById("lut-input");
+let lutInput = document.getElementById("lut-input");
 
 
 board.addEventListener("pointerdown", () => {isDrawing = true}); //start drawing
@@ -55,31 +55,40 @@ function interpolateArray(data, fitCount) {
 function uploadLut() {
 	
 
+	context.lineWidth = "10";
+    context.lineCap = "round";
+    context.strokeStyle = "#FF0000";
 	
-	const lutString = lutInput.value;
-	log(lutString);
-	for (let i=0; i<xsamp.length; i++) {
+	
+	const luttext = lutInput.value;
+	const lutarray = luttext.split(',').map(Number);
+	//console.log(lutarray);
+	for (let i=0; i<lutarray.length; i++) {
 		
 
-goodcor[i] = Math.trunc(xsamp[i])
-	log(goodcor[i]);
-	
+xsamp[i] = Math.trunc(lutarray[i]);
+	coords.push(xsamp[i]);
+	if (i>0) {
+		context.lineTo(i, (xsamp[i]/65.5 - 20));
+		context.stroke();
+	}
 }
-const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
-log(newarrsize);
-//temparrayx = interpolateArray(xsamp,sampleSize.value);
-temparrayy = interpolateArray(coords,sampleSize.value);
-for (let i=0; i<sampleSize.value; i++) {
-	//temparrayx[i] = Math.trunc(temparrayx[i]);
-	temparrayy[i] = Math.trunc(temparrayy[i]);
+console.log(coords);
+// const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
+// //log(newarrsize);
+// //temparrayx = interpolateArray(xsamp,sampleSize.value);
+// temparrayy = interpolateArray(coords,sampleSize.value);
+// for (let i=0; i<sampleSize.value; i++) {
+// 	//temparrayx[i] = Math.trunc(temparrayx[i]);
+// 	temparrayy[i] = Math.trunc(temparrayy[i]);
 
-	log(temparrayy[i]);
+// 	//log(temparrayy[i]);
 	
-}
+// }
 
 
 
-
+console.log(xsamp);
 
 }
 
@@ -132,7 +141,6 @@ function exportAdjacency() {
 	}
 }
 */
-
 	for (let i=0; i<xsamp.length; i++) {
 		
 
@@ -140,6 +148,8 @@ goodcor[i] = Math.trunc(xsamp[i])
 	//log(goodcor[i]);
 	
 }
+console.log(xsamp);
+
 const newarrsize = goodcor[goodcor.length - 1] - goodcor[0];
 //temparrayx = interpolateArray(xsamp,sampleSize.value);
 temparrayy = interpolateArray(coords,sampleSize.value);
@@ -175,7 +185,7 @@ const csvContent = `data:text/csv;charset=utf-8,${temparrayy.map((e) => e.join("
 		
 		
 		
-		async function uploadUart() {
+async function uploadUart() {
 			
 			console.log('67');
 			
