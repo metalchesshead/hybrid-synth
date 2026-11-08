@@ -213,8 +213,12 @@ lu67[j] = uartdata[j];
 }
 void loop() {
     if (!ismoving) {
-              
-  drawcurrentwave(lu67, lut);
+              if (movebuff ==1) {
+                oledClearDMA();
+                movebuff = 0;
+                drawcurrentwave(lu67, lut);
+              }
+  
   }
  // dmatst();
 

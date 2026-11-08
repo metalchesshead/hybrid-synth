@@ -3,6 +3,8 @@
 #include <Arduino.h>
 int attackold;
 char bufferthing[4];
+int movebuff;
+int timethngy;
 void mux() {
 digitalWrite(1, HIGH); //CV_INH
 digitalWrite(2, LOW); //A
@@ -64,21 +66,23 @@ digitalWrite(1, LOW); //CV_INH
 // muxB0 = analogRead(20);
 delayMicroseconds(5);
 
-if ((muxA0> attackold+5) || (muxA0<attackold-5)) {
+if ((muxA0> attackold+10) || muxA0<attackold-10) {
+    timethngy = millis();
     ismoving = true;
-    // if (movebuff ==0){
-    //     oledClearDMA();
-    //     movebuff = movebuff + 1;
-    // }
+    if (movebuff ==0){
+        oledClearDMA();
+        movebuff = 1;
+    }
     
     sprintf(bufferthing, "%4d", muxA0);
     dmaPrint(bufferthing, 0, 0);
     Serial.println(bufferthing);
+     attackold = muxA0;
 }
-else {
+else if ((movebuff ==1) && (millis() - timethngy >500)) {
     ismoving = false;
 
 }
 
-// attackold = muxA0;
+
 }

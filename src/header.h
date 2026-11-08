@@ -16,7 +16,7 @@ void lfo(int lut[256]);
 
 #ifndef GLOBALS_H
 #define GLOBALS_H
-
+extern int movebuff;
 
 extern int note1;
 extern int dacthing;

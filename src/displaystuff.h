@@ -6,7 +6,7 @@
 
 extern int attackold;
 extern bool ismoving;
-extern int movebuff = 0;
+
 
 extern DMAChannel dma;
 
