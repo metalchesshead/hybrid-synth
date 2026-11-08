@@ -2,6 +2,7 @@
 #include <EEPROM.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <DMAChannel.h>
 void myNoteOn(byte channel, byte note, byte velocity);
 void myNoteOff(byte channel, byte note, byte velocity); 
 void dacWrite1(int value, byte dac);
@@ -17,11 +18,12 @@ void lfo(int lut[256]);
 #define GLOBALS_H
 
 
-
 extern int note1;
 extern int dacthing;
 inline int muxB0, muxB1, muxB2, muxB3, muxB4, muxB5, muxB6, muxB7;
 inline int muxA0, muxA1, muxA2, muxA3, muxA4, muxA5, muxA6, muxA7;
+extern bool ismoving;
+
 inline int muxC0, muxC1, muxC2, muxC3, muxC4, muxC5, muxC6, muxC7;
 
 inline int sustain =0;

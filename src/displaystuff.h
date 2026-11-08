@@ -2,10 +2,27 @@
 #ifndef DISPLAYSTUFF_H
 #define DISPLAYSTUFF_H
 #include "header.h"
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-#define OLED_RESET -1
 
+
+extern int attackold;
+extern bool ismoving;
+extern int movebuff = 0;
+
+extern DMAChannel dma;
+
+// void drawcurrentwave(int16_t lu67[256], int16_t lut[256]);
+// void displaystart();
+// void attack();
+// void homescreen();
+
+
+bool dmaPrint(const char *str, uint8_t column, uint8_t page);
+bool dmaI2CWrite(uint8_t control, const uint8_t *data, uint16_t length);
+bool oledInitDMA();
+bool oledClearDMA();
+bool sendCharacterDMA();
+bool drawPixelDMA(uint8_t x, uint8_t y, bool color = true);
 void drawcurrentwave(int16_t lu67[256], int16_t lut[256]);
-void displaystart();
+void drawLineDMA(int x0, int y0, int x1, int y1, bool color = true);
+
 #endif

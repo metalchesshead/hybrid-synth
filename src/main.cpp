@@ -9,6 +9,7 @@
 #include "displaystuff.h"
 #include <HardwareSerial.h>
 #include <usb_serial.h>
+#include <Adafruit_SSD1306.h>
 
 #include <Audio.h>
 
@@ -20,12 +21,16 @@ AudioOutputPT8211        pt8211_output;
 AudioConnection       patchCord1(waveform1, 0, pt8211_output, 0);
 AudioConnection       patchCord2(waveform1, 0, pt8211_output, 1);
 AudioControlSGTL5000  sgtl5000_1;
+#define DISPLAY_WIDTH    128
+#define DISPLAY_HEIGHT   64
+Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
 
  int dacData;
  int dacthing;
 int i = 0;
 int note1;
 int iprev = 0;
+int returndispbuff = 0;
 // int jprev = 0;
  uint16_t uartdata[256];
  int eedata[256];
@@ -55,6 +60,24 @@ uint8_t numBits(uint32_t num) {
 }
 
 void setup() {
+    // Wire.setClock(1000000);
+    // Wire.begin();
+            Serial.begin(31250);
+
+    Serial3.begin(31250);
+    Serial3.addMemoryForRead(&bigserialbuffer, sizeof(bigserialbuffer)); //resizebuffer
+        Wire.begin();
+    Wire.setClock(400000);
+    delay(1000);
+    dma.begin(true);
+
+    delay(20);
+
+    // Initialize OLED using DMA
+    oledInitDMA();
+    oledClearDMA();
+drawcurrentwave(lu67, lut);
+ //dmaPrint("HELLO WORLD", 0, 0);
   AudioMemory(20);
   sgtl5000_1.enable();
   sgtl5000_1.volume(1);
@@ -83,18 +106,17 @@ void setup() {
     pinMode(16, INPUT); //mux3
   SPI.setMOSI(11);
   SPI.setSCK(13);
-        Serial.begin(31250);
 
-    Serial3.begin(31250);
-    Serial3.addMemoryForRead(&bigserialbuffer, sizeof(bigserialbuffer)); //resizebuffer
     
-displaystart();
-drawcurrentwave(lu67, lut);
+//displaystart();
+//drawcurrentwave(lu67, lut);
 
 }
 
 
 void envelopee() {
+
+
        CV0=muxA0;
   alpha1=0.999*cos((1023-CV0)/795);
   alpha1=sqrt(alpha1);  
@@ -184,18 +206,36 @@ lu67[j] = uartdata[j];
   waveform1.begin(WAVEFORM_ARBITRARY);
   //eepromwrite(0, eedata, 256);
   iprev = 0;
+  oledClearDMA();
+  drawcurrentwave(lu67, lut);
 }  
 
 }
 void loop() {
-  for (int i=0; i<256; i++){
-    Serial.print(32768-(lu67[i] + lut[i])/2);
-    Serial.print(",");
-
+    if (!ismoving) {
+              
+  drawcurrentwave(lu67, lut);
   }
-  Serial.println();
-    Serial.println("------------------------------");
+ // dmatst();
 
+  // for (int i=0; i<256; i++){
+  //   Serial.print(32768-(lu67[i] + lut[i])/2);
+  //   Serial.print(",");
+
+  // }
+  // Serial.println();
+  //   Serial.println("------------------------------");
+// if (ismoving == true){ 
+//   //attack();
+//   returndispbuff +=1;
+// }
+// else {
+//   if (returndispbuff >0) {
+//     //homescreen();
+//     //drawcurrentwave(lu67, lut);
+//     returndispbuff = 0;
+//   }
+// }
   serialstuffs();
   if (muxC1<100) {
 waveform1.amplitude(0);

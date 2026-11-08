@@ -1,10 +1,9 @@
 #include "header.h"
+#include "displaystuff.h"
 #include <Arduino.h>
-
+int attackold;
+char bufferthing[4];
 void mux() {
-
-
-
 digitalWrite(1, HIGH); //CV_INH
 digitalWrite(2, LOW); //A
 digitalWrite(3, LOW); //B
@@ -65,6 +64,21 @@ digitalWrite(1, LOW); //CV_INH
 // muxB0 = analogRead(20);
 delayMicroseconds(5);
 
+if ((muxA0> attackold+5) || (muxA0<attackold-5)) {
+    ismoving = true;
+    // if (movebuff ==0){
+    //     oledClearDMA();
+    //     movebuff = movebuff + 1;
+    // }
+    
+    sprintf(bufferthing, "%4d", muxA0);
+    dmaPrint(bufferthing, 0, 0);
+    Serial.println(bufferthing);
+}
+else {
+    ismoving = false;
 
+}
 
+// attackold = muxA0;
 }
