@@ -24,5 +24,6 @@ bool sendCharacterDMA();
 bool drawPixelDMA(uint8_t x, uint8_t y, bool color = true);
 void drawcurrentwave(int16_t lu67[256], int16_t lut[256]);
 void drawLineDMA(int x0, int y0, int x1, int y1, bool color = true);
+bool oledDisplayBufferDMA();
 
 #endif

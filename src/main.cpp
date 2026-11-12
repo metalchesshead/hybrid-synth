@@ -16,15 +16,33 @@
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI); 
 
 
-AudioSynthWaveform    waveform1;
-AudioOutputPT8211        pt8211_output; 
-AudioConnection       patchCord1(waveform1, 0, pt8211_output, 0);
-AudioConnection       patchCord2(waveform1, 0, pt8211_output, 1);
-AudioControlSGTL5000  sgtl5000_1;
+#include <Audio.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+#include <SerialFlash.h>
+
+// GUItool: begin automatically generated code
+AudioSynthNoisePink      pink1;          //xy=192.20000076293945,360.2000026702881
+AudioSynthNoiseWhite     noise1;         //xy=193.20000076293945,317.2000026702881
+AudioSynthWaveform       waveform1;      //xy=219.20000076293945,265.1999702453613
+AudioMixer4              mixer1;         //xy=365.20000076293945,330.20000076293945
+AudioOutputPT8211        pt8211_output;  //xy=529.1999740600586,327.19997215270996
+AudioConnection          patchCord1(pink1, 0, mixer1, 2);
+AudioConnection          patchCord2(noise1, 0, mixer1, 1);
+AudioConnection          patchCord3(waveform1, 0, mixer1, 0);
+AudioConnection          patchCord4(mixer1, 0, pt8211_output, 0);
+AudioConnection          patchCord5(mixer1, 0, pt8211_output, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=241.19998931884766,423.2000045776367
+// GUItool: end automatically generated code
+
 #define DISPLAY_WIDTH    128
 #define DISPLAY_HEIGHT   64
 Adafruit_SSD1306 display(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, -1);
+int rotaryAin, rotaryBin;
+int rotaryCount = 0;
 
+int lfodestbuff = 0;
  int dacData;
  int dacthing;
 int i = 0;
@@ -38,7 +56,7 @@ const float sampleRate = 44100.0;    // sample rate 44.1KHz
 volatile int phInc, phInc2, phIncLFO;                  // dds phase increment
 volatile unsigned long phAcc, phAcc2, phAccLFO;        // dds phase accumulator
 unsigned long tuningWord, tuningWord2, tuningWordLFO;            // dds tuning word (M)
-float lfoFreq = 6.7;
+float lfoFreq = 0;
 float fOut, fOut2;      
 byte tableAddrWidth;
 int rec = '0';
@@ -76,7 +94,7 @@ void setup() {
     // Initialize OLED using DMA
     oledInitDMA();
     oledClearDMA();
-drawcurrentwave(lu67, lut);
+drawcurrentwave(lu67, lutSaw);
  //dmaPrint("HELLO WORLD", 0, 0);
   AudioMemory(20);
   sgtl5000_1.enable();
@@ -104,6 +122,9 @@ drawcurrentwave(lu67, lut);
     pinMode(22, INPUT); //mux2
     pinMode(17, INPUT); //mux1
     pinMode(16, INPUT); //mux3
+
+    pinMode(9, OUTPUT); //RotaryselA
+    pinMode(10, OUTPUT); //RotaryselB
   SPI.setMOSI(11);
   SPI.setSCK(13);
 
@@ -207,16 +228,52 @@ lu67[j] = uartdata[j];
   //eepromwrite(0, eedata, 256);
   iprev = 0;
   oledClearDMA();
-  drawcurrentwave(lu67, lut);
+  drawcurrentwave(lu67, lutSaw);
 }  
 
 }
 void loop() {
+
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+     if (muxC6 != rotaryAin){     
+     // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
+     if (muxC7 != muxC6) { 
+       rotaryCount ++;
+     } else {
+       rotaryCount --;
+     }
+     Serial.print("Position: ");
+     Serial.println(rotaryCount);
+   } 
+   rotaryAin = muxC6; // Updates the previous state of the outputA with the current state
+ if (rotaryCount>=100){
+  rotaryCount = 100;
+ }
+ if (rotaryCount<=0) {
+  rotaryCount = 0;
+ }
+ lfoFreq = rotaryCount;
+
     if (!ismoving) {
               if (movebuff ==1) {
                 oledClearDMA();
                 movebuff = 0;
-                drawcurrentwave(lu67, lut);
+                    if (muxC0<100) {
+drawcurrentwave(lu67, lu67);}
+
+else if (muxC0>=100 && muxC0<500)
+{
+  drawcurrentwave(lu67, lutSaw);
+}
+else if (muxC0>=500 && muxC0 <750) {
+  drawcurrentwave(lu67, lutSqr);
+
+}
+else if (muxC0>=750) {
+  drawcurrentwave(lu67, lutTri);
+}
+                
               }
   
   }
@@ -254,22 +311,22 @@ MIDI.read();
 lfo();
 //Serial.println(dacData);
 //dacthing =round(((float)dacData/16384)*note1*14.67);
-dacthing =round(note1*14.67);
+dacthing =round(note1*14.89 + int(100*(float)muxC2/1023 - 50));
 if (muxC0<100) {
-digitalWrite(5, LOW);
-digitalWrite(8, LOW);
+digitalWrite(5, HIGH);
+digitalWrite(8, HIGH);
 }
 else if (muxC0>=100 && muxC0<500)
 {
-  digitalWrite(5, HIGH);
-digitalWrite(8, HIGH);
+  digitalWrite(5, LOW);
+digitalWrite(8, LOW);
 }
 else if (muxC0>=500 && muxC0 <750) {
   digitalWrite(5, HIGH);
-digitalWrite(8, HIGH);
+digitalWrite(8, LOW);
 }
 else if (muxC0>=750) {
-  digitalWrite(5, HIGH);
+  digitalWrite(5, LOW);
 digitalWrite(8, HIGH);
 }
 

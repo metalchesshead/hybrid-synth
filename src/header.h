@@ -10,7 +10,7 @@ void dacWrite2(int value, byte dac);
 void mux();
 void eepromwrite(int address, int numbers[], int arraySize);
 void eepromread(int address, int numbers[], int arraySize);
-void lfo(int lut[256]);
+
 //int note1;
 //int mux0, mux1, mux2, mux3, mux4, mux5, mux6, mux7;
 
